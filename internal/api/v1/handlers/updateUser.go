@@ -40,6 +40,8 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		input.CompanyID = usr.CompanyID
 	}
 
+	input.VerifyUserType()
+
 	hashPassword, err := repositories.HashPassword(input.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
