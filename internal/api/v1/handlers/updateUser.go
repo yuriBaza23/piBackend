@@ -9,8 +9,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func UpdatePartner(w http.ResponseWriter, r *http.Request) {
-	var input models.Partner
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	var input models.User
 
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -21,37 +21,44 @@ func UpdatePartner(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	partner, err := repositories.GetPartner(id)
+	usr, err := repositories.GetUser(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if input.Name == "" {
-		input.Name = partner.Name
-	}
-	if input.Type == "" {
-		input.Type = partner.Type
+		input.Name = usr.Name
 	}
 	if input.Email == "" {
-		input.Email = partner.Email
+		input.Email = usr.Email
 	}
-	if input.AccountID == "" {
-		input.AccountID = partner.AccountID
+	if input.Password == "" {
+		input.Password = usr.Password
+	}
+	if input.CompanyID == "" {
+		input.CompanyID = usr.CompanyID
 	}
 
-	_, err = repositories.UpdatePartner(id, input)
+	hashPassword, err := repositories.HashPassword(input.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	input.Password = hashPassword
+
+	_, err = repositories.UpdateUser(id, input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	partner, err = repositories.GetPartner(id)
+	usr, err = repositories.GetUser(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(partner)
+	json.NewEncoder(w).Encode(usr)
 }

@@ -8,17 +8,17 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func DeletePartner(w http.ResponseWriter, r *http.Request) {
+func GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	partner, err := repositories.DeletePartner(id)
+	usr, err := repositories.GetUser(id)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	} else {
 		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(partner)
+		json.NewEncoder(w).Encode(usr)
 	}
 }
