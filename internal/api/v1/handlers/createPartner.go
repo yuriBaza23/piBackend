@@ -9,7 +9,7 @@ import (
 	"pi/internal/api/v1/utils"
 )
 
-func CreateParner(w http.ResponseWriter, r *http.Request) {
+func CreatePartner(w http.ResponseWriter, r *http.Request) {
 	var partner models.Partner
 	var resp map[string]any
 
@@ -31,17 +31,6 @@ func CreateParner(w http.ResponseWriter, r *http.Request) {
 	// terminar o cadastro iniciado pelo sócio admin
 	if partner.Type == "admin" {
 		partner.AccountID = partner.CompanyID
-	}
-
-	validatePartnerEmail := utils.ValidateEmail(partner.Email)
-	if !validatePartnerEmail {
-		resp = map[string]any{
-			"error":   true,
-			"message": "email is invalid",
-		}
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(resp)
-		return
 	}
 
 	id, err := repositories.InsertPartner(partner)

@@ -1,6 +1,9 @@
 package models
 
-import "errors"
+import (
+	"errors"
+	"pi/internal/api/v1/utils"
+)
 
 var PartnerTypes []string = []string{"admin", "other"}
 
@@ -23,4 +26,11 @@ func (p *Partner) VerifyType() error {
 	}
 
 	return errors.New("invalid partner type")
+}
+
+func (p *Partner) VerifyEmail() error {
+	if !utils.ValidateEmail(p.Email) {
+		return errors.New("invalid email")
+	}
+	return nil
 }

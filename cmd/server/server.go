@@ -11,7 +11,11 @@ import (
 func HttpInit(port string) {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/partners", handlers.CreateParner).Methods("POST")
+	r.HandleFunc("/partner", handlers.CreatePartner).Methods("POST")
+	r.HandleFunc("/partner/{id}", handlers.GetPartner).Methods("GET")
+	r.HandleFunc("/partner", handlers.GetAllPartners).Methods("GET")
+	r.HandleFunc("/partner/{id}", handlers.UpdatePartner).Methods("PUT")
+	r.HandleFunc("/partner/{id}", handlers.DeletePartner).Methods("DELETE")
 
 	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 }
