@@ -11,7 +11,13 @@ func DeleteCompany(id string) (int64, error) {
 	}
 	defer conn.Close()
 
-	stmt := `DELETE FROM companies WHERE id=$1`
+	stmt := `DELETE FROM users_companies WHERE companyId=$1`
+	_, err = conn.Exec(stmt, id)
+	if err != nil {
+		return 0, err
+	}
+
+	stmt = `DELETE FROM companies WHERE id=$1`
 	row, err := conn.Exec(stmt, id)
 	if err != nil {
 		return 0, err
@@ -50,9 +56,29 @@ func GetCompany(id string) (cmp models.Company, err error) {
 	stmt := `SELECT * FROM companies WHERE id=$1`
 	err = conn.QueryRow(stmt, id).Scan(&cmp.ID, &cmp.Name, &cmp.Email, &cmp.CNPJ, &cmp.HubID, &cmp.CreatedAt, &cmp.UpdatedAt)
 
-	userIds := []string{}
-	stmt = `SELECT userId FROM users_companies WHERE companyId=$1`
-	err = conn.QueryRow(stmt, id).Scan(&userIds)
+	stmt = `SELECT userId, type FROM users_companies WHERE companyId=$1`
+	rows, err := conn.Query(stmt, id)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var usr models.User
+		var userId string
+
+		err = rows.Scan(&userId, &usr.Type)
+		if err != nil {
+			continue
+		}
+
+		stmt = `SELECT id, email, name, createdAt, updatedAt FROM users WHERE id=$1`
+		err = conn.QueryRow(stmt, userId).Scan(&usr.ID, &usr.Email, &usr.Name, &usr.CreatedAt, &usr.UpdatedAt)
+		if err != nil {
+			continue
+		}
+		usr.CompanyID = id
+		cmp.Users = append(cmp.Users, usr)
+	}
 
 	return
 }
@@ -67,9 +93,29 @@ func GetCompanyByCNPJ(cnpj string) (cmp models.Company, err error) {
 	stmt := `SELECT * FROM companies WHERE cnpj=$1`
 	err = conn.QueryRow(stmt, cnpj).Scan(&cmp.ID, &cmp.Name, &cmp.Email, &cmp.CNPJ, &cmp.HubID, &cmp.CreatedAt, &cmp.UpdatedAt)
 
-	userIds := []string{}
 	stmt = `SELECT userId FROM users_companies WHERE companyId=$1`
-	err = conn.QueryRow(stmt, cmp.ID).Scan(&userIds)
+	rows, err := conn.Query(stmt)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var usr models.User
+		var userId string
+
+		err = rows.Scan(&userId)
+		if err != nil {
+			continue
+		}
+
+		stmt = `SELECT id, email, name FROM users WHERE userId=$1`
+		err = conn.QueryRow(stmt, userId).Scan(&usr.ID, &usr.Email, &usr.Name)
+		if err != nil {
+			continue
+		}
+
+		cmp.Users = append(cmp.Users, usr)
+	}
 
 	return
 }

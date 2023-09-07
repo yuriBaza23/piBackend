@@ -16,8 +16,8 @@ type Company struct {
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 	// Para criação do owner
-	OwnerName  string `json:"ownerName"`
-	OwnerEmail string `json:"ownerEmail"`
+	OwnerName  string `json:"ownerName,omitempty"`
+	OwnerEmail string `json:"ownerEmail,omitempty"`
 }
 
 func (cmp *Company) VerifyCompanyEmail() error {
