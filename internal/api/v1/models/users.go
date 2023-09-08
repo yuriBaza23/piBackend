@@ -13,6 +13,7 @@ type User struct {
 	Email     string `json:"email"`
 	Password  string `json:"password,omitempty"`
 	Type      string `json:"type"`
+	IsPreReg  bool   `json:"isPreRegister"`
 	CompanyID string `json:"companyId"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`

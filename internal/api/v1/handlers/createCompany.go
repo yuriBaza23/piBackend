@@ -66,7 +66,8 @@ func CreateCompany(w http.ResponseWriter, r *http.Request) {
 	usr.Email = cmp.OwnerEmail
 
 	if cmp.IsPreCad {
-		usr.Password = "@pre-cad"
+		usr.Password = "1234567890"
+		usr.IsPreReg = true
 	}
 
 	// Cria um hash para a senha do usuário

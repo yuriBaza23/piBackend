@@ -19,6 +19,9 @@ func HttpInit(port string) {
 
 	r.HandleFunc("/company", handlers.CreateCompany).Methods("POST")
 	r.HandleFunc("/company/{id}", handlers.GetCompany).Methods("GET")
+	r.HandleFunc("/company", handlers.GetAllCompanies).Methods("GET")
+	r.HandleFunc("/company/{id}", handlers.UpdateCompany).Methods("PUT")
+	r.HandleFunc("/company/{id}", handlers.DeleteCompany).Methods("DELETE")
 
 	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 }

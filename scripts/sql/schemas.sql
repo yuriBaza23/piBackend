@@ -26,3 +26,5 @@ create table if not exists companies (
   createdAt timestamp default now(),
   updatedAt timestamp default now()
 );
+
+alter table users add column if not exists isPreRegister boolean default false;
