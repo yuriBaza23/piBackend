@@ -11,7 +11,8 @@ type Incubator struct {
 	Email    string `json:"email"`
 	IsPreCad bool   `json:"isPreCad"`
 	// Para utilizar quando tivermos o back unido
-	//Companies    []Companies `json:"companies"`
+	// Empresas que a incubadora possui
+	// Companies    []Companies `json:"companies"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
 }

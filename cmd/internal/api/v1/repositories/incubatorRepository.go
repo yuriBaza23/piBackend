@@ -12,7 +12,7 @@ func DeleteIncubator(id string) (int64, error) {
 	}
 	defer conn.Close()
 
-	stmt := `DELETE FROM companies WHERE id=$1`
+	stmt := `DELETE FROM incubators WHERE id=$1`
 	row, err := conn.Exec(stmt, id)
 	if err != nil {
 		return 0, err
