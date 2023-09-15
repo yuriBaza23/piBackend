@@ -88,7 +88,11 @@ grant all privileges on database pi to user_pi;
 grant all privileges on all tables in schema public to user_pi;
 grant all privileges on all sequences in schema public to user_pi;
 ```
-Por fim, nos conectaremos ao banco de dados e criaremos as tabelas.
+Para se conectar ao banco de dados com o usuário criado, execute o seguinte comando:
+```sql
+\c pi;
+```
+Por fim, criaremos nossas tabelas com base no arquivo `schema.sql`.
 
 Para sair do banco de dados, execute o comando `exit` no seu terminal.
 Lembre-se de configurar o arquivo de configuração com as informações do seu banco de dados. 
