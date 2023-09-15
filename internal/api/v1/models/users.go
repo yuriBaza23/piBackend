@@ -5,14 +5,28 @@ import (
 	"pi/internal/api/v1/utils"
 )
 
+var UsersProps []string = []string{"owner", "other"}
+
 type User struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
 	Email     string `json:"email"`
-	Password  string `json:"password"`
+	Password  string `json:"password,omitempty"`
+	Type      string `json:"type"`
+	IsPreReg  bool   `json:"isPreRegister"`
 	CompanyID string `json:"companyId"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
+}
+
+func (usr *User) VerifyUserType() error {
+	for _, prop := range UsersProps {
+		if prop == usr.Type {
+			return nil
+		}
+	}
+	usr.Type = "other"
+	return nil
 }
 
 func (usr *User) VerifyUserEmail() error {

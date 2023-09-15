@@ -34,13 +34,13 @@ func InsertUser(usr models.User) (id string, err error) {
 
 	defer db.Close()
 
-	stmt := `INSERT INTO users (id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id`
+	stmt := `INSERT INTO users (id, name, email, password, isPreRegister) VALUES ($1, $2, $3, $4, $5) RETURNING id`
 
-	err = db.QueryRow(stmt, usr.ID, usr.Name, usr.Email, usr.Password).Scan(&id)
+	err = db.QueryRow(stmt, usr.ID, usr.Name, usr.Email, usr.Password, usr.IsPreReg).Scan(&id)
 
-	stmt = `INSERT INTO users_companies (companyId, userId) VALUES ($1, $2) RETURNING id`
+	stmt = `INSERT INTO users_companies (companyId, userId, type) VALUES ($1, $2, $3) RETURNING id`
 
-	err = db.QueryRow(stmt, usr.CompanyID, usr.ID).Scan(&id)
+	err = db.QueryRow(stmt, usr.CompanyID, usr.ID, usr.Type).Scan(&id)
 
 	return usr.ID, err
 }
@@ -52,11 +52,11 @@ func GetUser(id string) (usr models.User, err error) {
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM users WHERE id=$1`
-	err = conn.QueryRow(stmt, id).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Password, &usr.CreatedAt, &usr.UpdatedAt)
+	stmt := `SELECT id, name, email, password, isPreRegister, createdAt, updatedAt FROM users WHERE id=$1`
+	err = conn.QueryRow(stmt, id).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Password, &usr.IsPreReg, &usr.CreatedAt, &usr.UpdatedAt)
 
-	stmt = `SELECT companyId FROM users_companies WHERE userId=$1`
-	err = conn.QueryRow(stmt, id).Scan(&usr.CompanyID)
+	stmt = `SELECT companyId, type FROM users_companies WHERE userId=$1`
+	err = conn.QueryRow(stmt, id).Scan(&usr.CompanyID, &usr.Type)
 
 	return
 }
@@ -68,7 +68,7 @@ func GetAllUsers() (usrArray []models.User, err error) {
 	}
 	defer conn.Close()
 
-	stmt := `SELECT id, name, email, createdAt, updatedAt FROM users`
+	stmt := `SELECT id, name, email, isPreRegister, createdAt, updatedAt FROM users`
 	rows, err := conn.Query(stmt)
 	if err != nil {
 		return
@@ -77,13 +77,13 @@ func GetAllUsers() (usrArray []models.User, err error) {
 	for rows.Next() {
 		var usr models.User
 
-		err = rows.Scan(&usr.ID, &usr.Name, &usr.Email, &usr.CreatedAt, &usr.UpdatedAt)
+		err = rows.Scan(&usr.ID, &usr.Name, &usr.Email, &usr.IsPreReg, &usr.CreatedAt, &usr.UpdatedAt)
 		if err != nil {
 			continue
 		}
 
-		stmt = `SELECT companyId FROM users_companies WHERE userId=$1`
-		err = conn.QueryRow(stmt, usr.ID).Scan(&usr.CompanyID)
+		stmt = `SELECT companyId, type FROM users_companies WHERE userId=$1`
+		err = conn.QueryRow(stmt, usr.ID).Scan(&usr.CompanyID, &usr.Type)
 		if err != nil {
 			continue
 		}
@@ -107,17 +107,33 @@ func UpdateUser(id string, usr models.User) (int64, error) {
 
 	defer conn.Close()
 
-	stmt := `UPDATE users SET name=$1, email=$2, password=$3, updatedAt=$4 WHERE id=$5`
-	_, err = conn.Exec(stmt, usr.Name, usr.Email, usr.Password, time.Now(), id)
+	stmt := `UPDATE users SET name=$1, email=$2, password=$3, isPreRegister=$4, updatedAt=$5 WHERE id=$6`
+	_, err = conn.Exec(stmt, usr.Name, usr.Email, usr.Password, false, time.Now(), id)
 	if err != nil {
 		return 0, err
 	}
 
-	stmt = `UPDATE users_companies SET companyId=$1 WHERE userId=$2`
-	row, err := conn.Exec(stmt, usr.CompanyID, id)
+	stmt = `UPDATE users_companies SET companyId=$1, type=$2 WHERE userId=$3`
+	row, err := conn.Exec(stmt, usr.CompanyID, usr.Type, id)
 	if err != nil {
 		return 0, err
 	}
 
 	return row.RowsAffected()
+}
+
+func GetUserByEmail(email string) (usr models.User, err error) {
+	conn, err := OpenConnection()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	stmt := `SELECT * FROM users WHERE email=$1`
+	err = conn.QueryRow(stmt, email).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Password, &usr.IsPreReg, &usr.CreatedAt, &usr.UpdatedAt)
+
+	stmt = `SELECT companyId, type FROM users_companies WHERE userId=$1`
+	err = conn.QueryRow(stmt, usr.ID).Scan(&usr.CompanyID, &usr.Type)
+
+	return
 }

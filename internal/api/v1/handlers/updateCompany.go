@@ -9,8 +9,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var input models.User
+func UpdateCompany(w http.ResponseWriter, r *http.Request) {
+	var input models.Company
 
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -21,46 +21,37 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	usr, err := repositories.GetUser(id)
+	cmp, err := repositories.GetCompany(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if input.Name == "" {
-		input.Name = usr.Name
+		input.Name = cmp.Name
 	}
 	if input.Email == "" {
-		input.Email = usr.Email
+		input.Email = cmp.Email
 	}
-	if input.Password == "" {
-		input.Password = usr.Password
+	if input.CNPJ == "" {
+		input.CNPJ = cmp.CNPJ
 	}
-	if input.CompanyID == "" {
-		input.CompanyID = usr.CompanyID
+	if input.HubID == "" {
+		input.HubID = cmp.HubID
 	}
 
-	input.VerifyUserType()
-
-	hashPassword, err := repositories.HashPassword(input.Password)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	input.Password = hashPassword
-
-	_, err = repositories.UpdateUser(id, input)
+	_, err = repositories.UpdateCompany(id, input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	usr, err = repositories.GetUser(id)
+	cmp, err = repositories.GetCompany(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(usr)
+	json.NewEncoder(w).Encode(cmp)
 }
