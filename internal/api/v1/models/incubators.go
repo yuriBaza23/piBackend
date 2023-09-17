@@ -2,7 +2,7 @@ package models
 
 import (
 	"errors"
-	"pi/cmd/internal/api/v1/utils"
+	"pi/internal/api/v1/utils"
 )
 
 type Incubator struct {
@@ -10,6 +10,7 @@ type Incubator struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	IsPreCad bool   `json:"isPreCad"`
+	Password string `json:"password,omitempty"`
 	// Para utilizar quando tivermos o back unido
 	// Empresas que a incubadora possui
 	// Companies    []Companies `json:"companies"`
