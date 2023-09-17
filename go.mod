@@ -5,6 +5,11 @@ go 1.20
 require github.com/spf13/viper v1.16.0
 
 require (
+	github.com/google/uuid v1.3.1 // indirect
+	github.com/lib/pq v1.10.9 // indirect
+)
+
+require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/hcl v1.0.0 // indirect
