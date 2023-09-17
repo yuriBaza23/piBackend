@@ -9,8 +9,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var input models.User
+func UpdateIncubator(w http.ResponseWriter, r *http.Request) {
+	var input models.Incubator
 
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -21,17 +21,17 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	usr, err := repositories.GetUser(id)
+	inc, err := repositories.GetIncubator(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if input.Name == "" {
-		input.Name = usr.Name
+		input.Name = inc.Name
 	}
 	if input.Email == "" {
-		input.Email = usr.Email
+		input.Email = inc.Email
 	}
 	if input.Password != "" {
 		hashPassword, err := repositories.HashPassword(input.Password)
@@ -41,27 +41,21 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		}
 		input.Password = hashPassword
 	} else {
-		input.Password = usr.Password
+		input.Password = inc.Password
 	}
 
-	if input.CompanyID == "" {
-		input.CompanyID = usr.CompanyID
-	}
-
-	input.VerifyUserType()
-
-	_, err = repositories.UpdateUser(id, input)
+	_, err = repositories.UpdateIncubator(id, input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	usr, err = repositories.GetUser(id)
+	inc, err = repositories.GetIncubator(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(usr)
+	json.NewEncoder(w).Encode(inc)
 }

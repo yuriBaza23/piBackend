@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"pi/cmd/internal/api/v1/models"
+	"pi/internal/api/v1/models"
 	"time"
 )
 
@@ -34,9 +34,9 @@ func InsertIncubator(inc models.Incubator) (id string, err error) {
 
 	defer db.Close()
 
-	stmt := `INSERT INTO incubators (id, name, email) VALUES ($1, $2, $3) RETURNING id`
+	stmt := `INSERT INTO incubators (id, name, email, password) VALUES ($1, $2, $3, $4) RETURNING id`
 
-	err = db.QueryRow(stmt, inc.ID, inc.Name, inc.Email).Scan(&id)
+	err = db.QueryRow(stmt, inc.ID, inc.Name, inc.Email, inc.Password).Scan(&id)
 
 	return
 }
@@ -49,7 +49,7 @@ func GetIncubator(id string) (inc models.Incubator, err error) {
 	defer conn.Close()
 
 	stmt := `SELECT * FROM incubators WHERE id=$1`
-	err = conn.QueryRow(stmt, id).Scan(&inc.ID, &inc.Name, &inc.Email, &inc.CreatedAt, &inc.UpdatedAt)
+	err = conn.QueryRow(stmt, id).Scan(&inc.ID, &inc.Name, &inc.Email, &inc.Password, &inc.CreatedAt, &inc.UpdatedAt)
 
 	return
 }
@@ -61,7 +61,7 @@ func GetAllIncubators() (inc []models.Incubator, err error) {
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM incubators`
+	stmt := `SELECT id, name, email, createdAt, updatedAt FROM incubators`
 	incRows, err := conn.Query(stmt)
 	if err != nil {
 		return
@@ -94,8 +94,8 @@ func UpdateIncubator(id string, inc models.Incubator) (int64, error) {
 
 	defer conn.Close()
 
-	stmt := `UPDATE incubators SET name=$1, email=$2, updatedAt=$3 WHERE id=$4`
-	row, err := conn.Exec(stmt, inc.Name, inc.Email, time.Now(), id)
+	stmt := `UPDATE incubators SET name=$1, email=$2, password=$3, updatedAt=$4 WHERE id=$5`
+	row, err := conn.Exec(stmt, inc.Name, inc.Email, inc.Password, time.Now(), id)
 	if err != nil {
 		return 0, err
 	}

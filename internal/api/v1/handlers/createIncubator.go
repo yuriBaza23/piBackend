@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"pi/cmd/internal/api/v1/models"
-	"pi/cmd/internal/api/v1/repositories"
-	"pi/cmd/internal/api/v1/utils"
+	"pi/internal/api/v1/models"
+	"pi/internal/api/v1/repositories"
+	"pi/internal/api/v1/utils"
 )
 
 func CreateIncubator(w http.ResponseWriter, r *http.Request) {
@@ -32,6 +32,22 @@ func CreateIncubator(w http.ResponseWriter, r *http.Request) {
 
 	// Cria um ID para a incubadora (Formato UUIDv4)
 	inc.ID = utils.CreateUuid()
+
+	// Cria um hash para a senha da incubadora
+	// O hash é criado com o repositório HashPassword e pode devolver
+	// um erro caso a senha não seja válida. Esse erro é tratado
+	// e retornado para o usuário.
+	hashPassword, err := repositories.HashPassword(inc.Password)
+	if err != nil {
+		resp = map[string]any{
+			"error":   true,
+			"message": err.Error(),
+		}
+		return
+	}
+
+	// A senha da incubadora é substituída pelo hash
+	inc.Password = hashPassword
 
 	// Insere a incubadora no banco de dados.
 	// O repositório InsertIncubator pode devolver um erro caso a incubadora

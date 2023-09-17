@@ -3,14 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"pi/cmd/internal/api/v1/models"
-	"pi/cmd/internal/api/v1/repositories"
+	"pi/internal/api/v1/models"
+	"pi/internal/api/v1/repositories"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
-func UpdateIncubator(w http.ResponseWriter, r *http.Request) {
-	var input models.Incubator
+func UpdateFinance(w http.ResponseWriter, r *http.Request) {
+	var input models.Finance
 
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -21,31 +22,36 @@ func UpdateIncubator(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	inc, err := repositories.GetIncubator(id)
+	fin, err := repositories.GetFinance(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if input.Name == "" {
-		input.Name = inc.Name
+		input.Name = fin.Name
 	}
-	if input.Email == "" {
-		input.Email = inc.Email
+	if input.Type == "" {
+		input.Type = fin.Type
+	}
+	if input.FinValue == "" {
+		input.Value = fin.Value
+	} else {
+		input.Value, _ = strconv.Atoi(input.FinValue)
 	}
 
-	_, err = repositories.UpdateIncubator(id, input)
+	_, err = repositories.UpdateFinance(id, input)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	inc, err = repositories.GetIncubator(id)
+	fin, err = repositories.GetFinance(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(inc)
+	json.NewEncoder(w).Encode(fin)
 }
