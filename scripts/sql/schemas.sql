@@ -37,3 +37,13 @@ create table if not exists companies (
   createdAt timestamp default now(),
   updatedAt timestamp default now()
 );
+
+create table if not exists finances (
+  id uuid default gen_random_uuid() primary key, 
+  name varchar not null,
+  type varchar not null,
+  value integer not null default 0,
+  companyId uuid not null,
+  createdAt timestamp default now(),
+  updatedAt timestamp default now()
+);

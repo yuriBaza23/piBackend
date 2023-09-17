@@ -33,6 +33,11 @@ func HttpInit(port string) {
 	r.HandleFunc("/incubator/{id}", handlers.DeleteIncubator).Methods("DELETE")
 
 	// Rotas relacionadas as finanças de uma empresa
+	r.HandleFunc("/finance", handlers.CreateFinance).Methods("POST")
+	r.HandleFunc("/finance/company/{id}", handlers.GetAllCompanyFinance).Methods("GET")
+	r.HandleFunc("/finance/{id}", handlers.GetFinance).Methods("GET")
+	r.HandleFunc("/finance/{id}", handlers.UpdateFinance).Methods("PUT")
+	r.HandleFunc("/finance/{id}", handlers.DeleteFinance).Methods("DELETE")
 
 	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 }
