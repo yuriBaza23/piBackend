@@ -47,3 +47,16 @@ create table if not exists finances (
   createdAt timestamp default now(),
   updatedAt timestamp default now()
 );
+
+create table if not exists tasks (
+  id uuid default gen_random_uuid() primary key, 
+  title varchar not null,
+  description varchar,
+  status varchar not null,
+  initialDate timestamp,
+  finalDate timestamp,
+  projectId uuid not null,
+  companyId uuid not null,
+  createdAt timestamp default now(),
+  updatedAt timestamp default now()
+);

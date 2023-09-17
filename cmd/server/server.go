@@ -39,5 +39,12 @@ func HttpInit(port string) {
 	r.HandleFunc("/finance/{id}", handlers.UpdateFinance).Methods("PUT")
 	r.HandleFunc("/finance/{id}", handlers.DeleteFinance).Methods("DELETE")
 
+	// Rotas relacionadas as tarefas de um projeto de uma empresa
+	r.HandleFunc("/task", handlers.CreateTask).Methods("POST")
+	r.HandleFunc("/task/project/{id}", handlers.GetAllProjectTasks).Methods("GET")
+	r.HandleFunc("/task/{id}", handlers.GetTask).Methods("GET")
+	r.HandleFunc("/task/{id}", handlers.UpdateTask).Methods("PUT")
+	r.HandleFunc("/task/{id}", handlers.DeleteTask).Methods("DELETE")
+
 	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
 }
