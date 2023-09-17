@@ -3,6 +3,7 @@ create table if not exists warnings (
   title varchar not null,
   content varchar not null,
   cmpID varchar not null default '',
+  incID varchar not null default '',
   createdAt timestamp default now(),
   updatedAt timestamp default now()
 );

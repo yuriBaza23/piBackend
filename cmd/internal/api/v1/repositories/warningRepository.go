@@ -30,9 +30,9 @@ func InsertWarning(war models.Warning) (id string, err error) {
 
 	defer db.Close()
 
-	stmt := `INSERT INTO warnings (id, title, content, companyID) VALUES ($1, $2, $3, $4) RETURNING id`
+	stmt := `INSERT INTO warnings (id, title, content, companyID, incubatorID) VALUES ($1, $2, $3, $4, $5) RETURNING id`
 
-	err = db.QueryRow(stmt, war.ID, war.Title, war.Content, war.CmpId).Scan(&id)
+	err = db.QueryRow(stmt, war.ID, war.Title, war.Content, war.CmpId, war.IncId).Scan(&id)
 
 	return
 }
@@ -45,7 +45,7 @@ func GetWarning(id string) (war models.Warning, err error) {
 	defer conn.Close()
 
 	stmt := `SELECT * FROM warnings WHERE id=$1`
-	err = conn.QueryRow(stmt, id).Scan(&war.ID, &war.Title, &war.Content, &war.CmpId, &war.CreatedAt, &war.UpdatedAt)
+	err = conn.QueryRow(stmt, id).Scan(&war.ID, &war.Title, &war.Content, &war.CmpId, &war.IncId, &war.CreatedAt, &war.UpdatedAt)
 
 	return
 }
@@ -66,7 +66,7 @@ func GetAllWarnings() (war []models.Warning, err error) {
 	for warRows.Next() {
 		var w models.Warning
 
-		err = warRows.Scan(&w.ID, &w.Title, &w.Content, &w.CmpId, &w.CreatedAt, &w.UpdatedAt)
+		err = warRows.Scan(&w.ID, &w.Title, &w.Content, &w.CmpId, &w.IncId, &w.CreatedAt, &w.UpdatedAt)
 		if err != nil {
 			continue
 		}
