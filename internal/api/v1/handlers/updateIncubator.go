@@ -33,6 +33,16 @@ func UpdateIncubator(w http.ResponseWriter, r *http.Request) {
 	if input.Email == "" {
 		input.Email = inc.Email
 	}
+	if input.Password != "" {
+		hashPassword, err := repositories.HashPassword(input.Password)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		input.Password = hashPassword
+	} else {
+		input.Password = inc.Password
+	}
 
 	_, err = repositories.UpdateIncubator(id, input)
 	if err != nil {

@@ -33,21 +33,22 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if input.Email == "" {
 		input.Email = usr.Email
 	}
-	if input.Password == "" {
+	if input.Password != "" {
+		hashPassword, err := repositories.HashPassword(input.Password)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		input.Password = hashPassword
+	} else {
 		input.Password = usr.Password
 	}
+
 	if input.CompanyID == "" {
 		input.CompanyID = usr.CompanyID
 	}
 
 	input.VerifyUserType()
-
-	hashPassword, err := repositories.HashPassword(input.Password)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	input.Password = hashPassword
 
 	_, err = repositories.UpdateUser(id, input)
 	if err != nil {
