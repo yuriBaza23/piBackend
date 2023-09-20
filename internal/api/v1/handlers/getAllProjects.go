@@ -3,16 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"pi/cmd/internal/api/v1/repositories"
-
-	"github.com/gorilla/mux"
+	"pi/internal/api/v1/repositories"
 )
 
-func GetProject(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-
-	prj, err := repositories.GetProject(id)
+func GetAllProjects(w http.ResponseWriter, r *http.Request) {
+	prj, err := repositories.GetAllProjects()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

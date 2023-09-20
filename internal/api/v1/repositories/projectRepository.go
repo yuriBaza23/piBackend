@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"pi/cmd/internal/api/v1/models"
+	"pi/internal/api/v1/models"
 	"time"
 )
 

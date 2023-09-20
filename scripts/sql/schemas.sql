@@ -1,3 +1,12 @@
+create table if not exists projects (
+  id uuid default gen_random_uuid() primary key, 
+  name varchar not null,
+  description varchar,
+  companyID uuid not null,
+  createdAt timestamp default now(),
+  updatedAt timestamp default now()
+);
+
 create table if not exists incubators (
   id uuid default gen_random_uuid() primary key, 
   name varchar not null,
