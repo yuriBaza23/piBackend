@@ -18,6 +18,12 @@ func DeleteUser(id string) (int64, error) {
 		return 0, err
 	}
 
+	stmt = `DELETE FROM users_companies WHERE userId=$1`
+	_, err = conn.Exec(stmt, id)
+	if err != nil {
+		return 0, err
+	}
+
 	return row.RowsAffected()
 }
 
