@@ -30,7 +30,7 @@ func InsertProject(prj models.Project) (id string, err error) {
 
 	defer db.Close()
 
-	stmt := `INSERT INTO projects (id, name, companyID, description) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	stmt := `INSERT INTO projects (id, name, companyID, description) VALUES ($1, $2, $3, $4) RETURNING id`
 
 	err = db.QueryRow(stmt, prj.ID, prj.Name, prj.CmpID, prj.Description).Scan(&id)
 
@@ -70,7 +70,7 @@ func GetAllProjects() (prj []models.Project, err error) {
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM projects`
+	stmt := `SELECT id, name, companyID, description, createdAt, updatedAt FROM projects`
 	prjRows, err := conn.Query(stmt)
 	if err != nil {
 		return
