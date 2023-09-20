@@ -6,10 +6,24 @@ import (
 	"pi/internal/api/v1/handlers"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func HttpInit(port string) {
 	r := mux.NewRouter()
+
+	// CORS
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{
+			http.MethodPost,
+			http.MethodGet,
+			http.MethodPut,
+			http.MethodDelete,
+		},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: false,
+	})
 
 	// Rotas relacionadas ao usuário
 	r.HandleFunc("/user", handlers.CreateUser).Methods("POST")
@@ -53,5 +67,13 @@ func HttpInit(port string) {
 	r.HandleFunc("/project/{id}", handlers.UpdateProject).Methods("PUT")
 	r.HandleFunc("/project/{id}", handlers.DeleteProject).Methods("DELETE")
 
-	http.ListenAndServe(fmt.Sprintf(":%s", port), r)
+	// Rotas relacionadas as advertências
+	r.HandleFunc("/warning", handlers.CreateWarning).Methods("POST")
+	r.HandleFunc("/warning/{id}", handlers.GetWarning).Methods("GET")
+	r.HandleFunc("/warning", handlers.GetAllWarnings).Methods("GET")
+	r.HandleFunc("/warning/{id}", handlers.UpdateWarning).Methods("PUT")
+	r.HandleFunc("/warning/{id}", handlers.DeleteWarning).Methods("DELETE")
+
+	handler := cors.Handler(r)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }
