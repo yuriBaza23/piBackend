@@ -60,6 +60,13 @@ func HttpInit(port string) {
 	r.HandleFunc("/task/{id}", handlers.UpdateTask).Methods("PUT")
 	r.HandleFunc("/task/{id}", handlers.DeleteTask).Methods("DELETE")
 
+	// Rotas relacionadas as advertências
+	r.HandleFunc("/warning", handlers.CreateWarning).Methods("POST")
+	r.HandleFunc("/warning/{id}", handlers.GetWarning).Methods("GET")
+	r.HandleFunc("/warning", handlers.GetAllWarnings).Methods("GET")
+	r.HandleFunc("/warning/{id}", handlers.UpdateWarning).Methods("PUT")
+	r.HandleFunc("/warning/{id}", handlers.DeleteWarning).Methods("DELETE")
+
 	handler := cors.Handler(r)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }

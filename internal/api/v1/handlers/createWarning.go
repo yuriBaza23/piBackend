@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"pi/cmd/internal/api/v1/models"
-	"pi/cmd/internal/api/v1/repositories"
-	"pi/cmd/internal/api/v1/utils"
+	"pi/internal/api/v1/models"
+	"pi/internal/api/v1/repositories"
+	"pi/internal/api/v1/utils"
 )
 
 func CreateWarning(w http.ResponseWriter, r *http.Request) {

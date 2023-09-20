@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"pi/cmd/internal/api/v1/repositories"
+	"pi/internal/api/v1/repositories"
 )
 
 func GetAllWarnings(w http.ResponseWriter, r *http.Request) {

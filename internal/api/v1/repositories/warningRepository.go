@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"pi/cmd/internal/api/v1/models"
+	"pi/internal/api/v1/models"
 	"time"
 )
 
@@ -30,7 +30,7 @@ func InsertWarning(war models.Warning) (id string, err error) {
 
 	defer db.Close()
 
-	stmt := `INSERT INTO warnings (id, title, content, companyID, incubatorID) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	stmt := `INSERT INTO warnings (id, title, content, cmpID, incID) VALUES ($1, $2, $3, $4, $5) RETURNING id`
 
 	err = db.QueryRow(stmt, war.ID, war.Title, war.Content, war.CmpId, war.IncId).Scan(&id)
 
@@ -57,7 +57,7 @@ func GetAllWarnings() (war []models.Warning, err error) {
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM warnings`
+	stmt := `SELECT id, title, content, cmpID, incID, createdAt, updatedAt FROM warnings`
 	warRows, err := conn.Query(stmt)
 	if err != nil {
 		return
