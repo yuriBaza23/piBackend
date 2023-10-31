@@ -3,6 +3,8 @@ package repositories
 import (
 	"pi/internal/api/v1/models"
 	"time"
+
+	"github.com/pingcap/errors"
 )
 
 func DeleteUser(id string) (int64, error) {
@@ -152,8 +154,12 @@ func GetUserByEmailAndPassword(email string, password string) (usr models.User, 
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM users WHERE email=$1 AND password=$2`
-	err = conn.QueryRow(stmt, email).Scan(&usr.ID)
+	stmt := `SELECT * FROM users WHERE email=$1`
+	err = conn.QueryRow(stmt, email).Scan(&usr.ID, &usr.Name, &usr.Email, &usr.Password, &usr.IsPreReg, &usr.CreatedAt, &usr.UpdatedAt)
+	result := CheckPasswordHash(password, usr.Password)
+	if !result {
+		return usr, errors.New("Not authorized")
+	}
 
 	stmt = `SELECT companyId, type FROM users_companies WHERE userId=$1`
 	err = conn.QueryRow(stmt, usr.ID).Scan(&usr.CompanyID, &usr.Type)
