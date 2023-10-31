@@ -102,3 +102,17 @@ func UpdateIncubator(id string, inc models.Incubator) (int64, error) {
 
 	return row.RowsAffected()
 }
+
+// Função auxiliar para o Login
+func GetIncubatorByEmailAndPassword(email string, password string) (inc models.Incubator, err error) {
+	conn, err := OpenConnection()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	stmt := `SELECT * FROM incubator WHERE email=$1 AND password=$2`
+	err = conn.QueryRow(stmt, email).Scan(&inc.ID)
+
+	return
+}
