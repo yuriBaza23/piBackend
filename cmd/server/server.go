@@ -74,6 +74,9 @@ func HttpInit(port string) {
 	r.HandleFunc("/warning/{id}", handlers.UpdateWarning).Methods("PUT")
 	r.HandleFunc("/warning/{id}", handlers.DeleteWarning).Methods("DELETE")
 
+	// Rotas relacionadas a logins de usuário e incubadora
+	r.HandleFunc("/login", handlers.Login).Methods("POST")
+
 	handler := cors.Handler(r)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }
