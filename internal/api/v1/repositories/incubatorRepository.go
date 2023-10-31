@@ -3,6 +3,8 @@ package repositories
 import (
 	"pi/internal/api/v1/models"
 	"time"
+
+	"github.com/pingcap/errors"
 )
 
 func DeleteIncubator(id string) (int64, error) {
@@ -111,8 +113,13 @@ func GetIncubatorByEmailAndPassword(email string, password string) (inc models.I
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM incubator WHERE email=$1 AND password=$2`
-	err = conn.QueryRow(stmt, email).Scan(&inc.ID)
+	stmt := `SELECT * FROM incubator WHERE email=$1`
+	err = conn.QueryRow(stmt, email).Scan(&inc.ID, &inc.Name, &inc.Email, &inc.CreatedAt, &inc.UpdatedAt)
+
+	result := CheckPasswordHash(password, inc.Password)
+	if !result {
+		return inc, errors.New("Not authorized")
+	}
 
 	return
 }

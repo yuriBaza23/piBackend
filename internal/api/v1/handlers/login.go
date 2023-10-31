@@ -19,19 +19,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// A ordem de criação do Hash e sua passagem como parâmetro na função GetUserByEmailAndPassword
-	// serve para verificar se um token de uma senha passada por um usuário existe ou não no BD
-	hashPassword, err := repositories.HashPassword(usr.Password)
-	if err != nil {
-		resp = map[string]any{
-			"error":   true,
-			"message": err.Error(),
-		}
-		return
-	}
-
 	// Verifica se o usuário existe no banco de dados User via email e senha
-	_, err = repositories.GetUserByEmailAndPassword(usr.Email, hashPassword)
+	res, err := repositories.GetUserByEmailAndPassword(usr.Email, usr.Password)
 	if err != nil {
 		// Caso não exista, realiza a busca no banco de dados Incubator
 
@@ -41,11 +30,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_, err = repositories.GetIncubatorByEmailAndPassword(inc.Email, hashPassword)
+		res, err := repositories.GetIncubatorByEmailAndPassword(inc.Email, usr.Password)
 		if err == nil {
 			resp = map[string]any{
-				"error":   false,
-				"message": "The User exists and can be logged in",
+				"error": false,
+				"user":  res,
+				"type":  "incubator",
 			}
 			w.Header().Add("Content-Type", "application/json")
 			json.NewEncoder(w).Encode(resp)
@@ -53,8 +43,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		resp = map[string]any{
-			"error":   false,
-			"message": "The User exists and can be logged in",
+			"error": false,
+			"user":  res,
+			"type":  "company",
 		}
 		w.Header().Add("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(resp)
