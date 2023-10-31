@@ -143,3 +143,20 @@ func GetUserByEmail(email string) (usr models.User, err error) {
 
 	return
 }
+
+// Função auxiliar para o login
+func GetUserByEmailAndPassword(email string, password string) (usr models.User, err error) {
+	conn, err := OpenConnection()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	stmt := `SELECT * FROM users WHERE email=$1 AND password=$2`
+	err = conn.QueryRow(stmt, email).Scan(&usr.ID)
+
+	stmt = `SELECT companyId, type FROM users_companies WHERE userId=$1`
+	err = conn.QueryRow(stmt, usr.ID).Scan(&usr.CompanyID, &usr.Type)
+
+	return
+}
