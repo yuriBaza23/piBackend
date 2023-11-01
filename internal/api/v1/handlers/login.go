@@ -10,7 +10,6 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 
 	var usr models.User
-	var inc models.Incubator
 	var resp map[string]any
 
 	err := json.NewDecoder(r.Body).Decode(&usr)
@@ -22,15 +21,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Verifica se o usuário existe no banco de dados User via email e senha
 	res, err := repositories.GetUserByEmailAndPassword(usr.Email, usr.Password)
 	if err != nil {
-		// Caso não exista, realiza a busca no banco de dados Incubator
-
-		err := json.NewDecoder(r.Body).Decode(&usr)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
-			return
-		}
-
-		res, err := repositories.GetIncubatorByEmailAndPassword(inc.Email, usr.Password)
+		res, err := repositories.GetIncubatorByEmailAndPassword(usr.Email, usr.Password)
 		if err == nil {
 			resp = map[string]any{
 				"error": false,

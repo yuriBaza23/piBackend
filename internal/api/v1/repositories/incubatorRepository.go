@@ -113,10 +113,10 @@ func GetIncubatorByEmailAndPassword(email string, password string) (inc models.I
 	}
 	defer conn.Close()
 
-	stmt := `SELECT * FROM incubator WHERE email=$1`
-	err = conn.QueryRow(stmt, email).Scan(&inc.ID, &inc.Name, &inc.Email, &inc.CreatedAt, &inc.UpdatedAt)
-
+	stmt := `SELECT * FROM incubators WHERE email=$1`
+	err = conn.QueryRow(stmt, email).Scan(&inc.ID, &inc.Name, &inc.Email, &inc.Password, &inc.CreatedAt, &inc.UpdatedAt)
 	result := CheckPasswordHash(password, inc.Password)
+
 	if !result {
 		return inc, errors.New("Not authorized")
 	}
