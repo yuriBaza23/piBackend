@@ -79,3 +79,11 @@ create table if not exists tasks (
   createdAt timestamp default now(),
   updatedAt timestamp default now()
 );
+
+create table if not exists categories(
+  id uuid default gen_random_uuid() primary key, 
+  name varchar not null,
+  companyId uuid not null,
+  createdAt timestamp default now(),
+  updatedAt timestamp default now()
+);
