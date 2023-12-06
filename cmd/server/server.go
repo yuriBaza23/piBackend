@@ -77,6 +77,13 @@ func HttpInit(port string) {
 	// Rotas relacionadas a logins de usuário e incubadora
 	r.HandleFunc("/login", handlers.Login).Methods("POST")
 
+	//Rotas relacionadas às categorias de finanças
+	r.HandleFunc("/category", handlers.CreateCategory).Methods("POST")
+	r.HandleFunc("/category/company/{id}", handlers.GetAllCategories).Methods("GET")
+	r.HandleFunc("/category/{id}", handlers.GetCategory).Methods("GET")
+	r.HandleFunc("/category/{id}", handlers.UpdateCategory).Methods("PUT")
+	r.HandleFunc("/category/{id}", handlers.DeleteCategory).Methods("DELETE")
+
 	handler := cors.Handler(r)
 	http.ListenAndServe(fmt.Sprintf(":%s", port), handler)
 }
