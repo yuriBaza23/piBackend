@@ -34,9 +34,13 @@ func InsertFinance(fin models.Finance) (id string, err error) {
 
 	defer db.Close()
 
-	stmt := `INSERT INTO finances (id, name, type, category, value, companyId) VALUES ($1, $2, $3, $4, $5) RETURNING id`
+	stmt := `INSERT INTO finances (id, name, type, category, value, companyId) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`
 
 	err = db.QueryRow(stmt, fin.ID, fin.Name, fin.Type, fin.Category, fin.Value, fin.CompanyID).Scan(&id)
+
+	if err != nil {
+		println(err.Error())
+	}
 
 	return
 }
